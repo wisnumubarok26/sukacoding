@@ -1,0 +1,55 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="max-w-lg mx-auto px-4 py-16">
+  <h1 class="font-display text-2xl font-bold text-slate-900 mb-6 text-center">Checkout</h1>
+
+  <div class="bg-white border border-slate-100 rounded-2xl shadow-soft p-6">
+    <div class="flex items-center gap-4 pb-5 border-b border-slate-100">
+      <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-brand-100 to-mint-100 flex items-center justify-center text-2xl shrink-0">
+        <% if (course.thumbnail) { %><img src="<%= course.thumbnail %>" class="w-full h-full object-cover rounded-xl" alt="" /><% } else { %>💻<% } %>
+      </div>
+      <div>
+        <p class="font-display font-bold text-slate-900"><%= course.title %></p>
+        <p class="text-xs text-slate-400 mt-1">Akses selama <%= course.access_duration_days %> hari</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between py-5">
+      <span class="text-slate-500">Total Pembayaran</span>
+      <span class="font-display text-2xl font-extrabold text-slate-900"><%= formatRupiah(course.price) %></span>
+    </div>
+
+    <% if (snapError) { %>
+      <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-4"><%= snapError %></div>
+    <% } %>
+
+    <% if (midtransEnabled && snapToken) { %>
+      <button id="pay-button" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl shadow-soft transition">Bayar Sekarang</button>
+      <script src="https://app.<%= isProduction ? '' : 'sandbox.' %>midtrans.com/snap/snap.js" data-client-key="<%= clientKey %>"></script>
+      <script>
+        document.getElementById('pay-button').addEventListener('click', function () {
+          window.snap.pay('<%= snapToken %>', {
+            onSuccess: function () { window.location.href = '/payment/status/<%= orderCode %>'; },
+            onPending: function () { window.location.href = '/payment/status/<%= orderCode %>'; },
+            onError: function () { alert('Pembayaran gagal, silakan coba lagi.'); },
+            onClose: function () { /* user menutup popup pembayaran */ },
+          });
+        });
+      </script>
+    <% } else { %>
+      <!-- MODE SIMULASI: Midtrans belum dikonfigurasi. Gunakan tombol ini untuk demo/testing alur pembayaran. -->
+      <div class="bg-amber-50 text-amber-700 text-xs rounded-lg p-3 mb-4">
+        ⚠️ Mode simulasi aktif (payment gateway belum dikonfigurasi). Klik tombol di bawah untuk mensimulasikan pembayaran berhasil.
+      </div>
+      <form action="/payment/simulate/<%= orderCode %>" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl shadow-soft transition">Simulasikan Pembayaran Berhasil</button>
+      </form>
+    <% } %>
+
+    <p class="text-xs text-slate-400 text-center mt-4">Kode Order: <%= orderCode %></p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

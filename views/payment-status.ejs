@@ -1,0 +1,29 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="max-w-lg mx-auto px-4 py-20 text-center">
+  <% if (order.status === 'paid') { %>
+    <div class="w-20 h-20 mx-auto rounded-full bg-mint-400/10 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-mint-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+    </div>
+    <h1 class="font-display text-2xl font-bold text-slate-900 mb-2">Pembayaran Berhasil!</h1>
+    <p class="text-slate-500 mb-8">Kamu sekarang punya akses penuh ke <strong><%= order.course_title %></strong>. Selamat belajar!</p>
+    <a href="/courses/<%= order.course_slug %>" class="inline-block bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl shadow-soft transition">Mulai Belajar</a>
+  <% } else if (order.status === 'pending') { %>
+    <div class="w-20 h-20 mx-auto rounded-full bg-amber-50 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" /><path d="M12 22a10 10 0 100-20 10 10 0 000 20z" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </div>
+    <h1 class="font-display text-2xl font-bold text-slate-900 mb-2">Menunggu Pembayaran</h1>
+    <p class="text-slate-500 mb-8">Order kamu dengan kode <strong><%= order.order_code %></strong> masih menunggu pembayaran diproses.</p>
+    <a href="/dashboard" class="inline-block bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl shadow-soft transition">Ke Dashboard</a>
+  <% } else { %>
+    <div class="w-20 h-20 mx-auto rounded-full bg-red-50 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </div>
+    <h1 class="font-display text-2xl font-bold text-slate-900 mb-2">Pembayaran Gagal</h1>
+    <p class="text-slate-500 mb-8">Transaksi tidak berhasil diselesaikan. Silakan coba lagi.</p>
+    <a href="/courses/<%= order.course_slug %>" class="inline-block bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl shadow-soft transition">Coba Lagi</a>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

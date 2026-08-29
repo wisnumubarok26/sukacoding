@@ -1,0 +1,134 @@
+<%- include('../partials/head') %>
+<%- include('_layout_start') %>
+
+<div class="p-6 lg:p-8 max-w-4xl">
+  <h1 class="font-display text-2xl font-bold text-slate-900 mb-6"><%= course ? 'Edit Course' : 'Tambah Course' %></h1>
+
+  <% if (errors && errors.length) { %>
+    <div class="bg-red-50 text-red-600 text-sm rounded-lg p-3 mb-5">
+      <% errors.forEach(e => { %><p><%= e.msg %></p><% }) %>
+    </div>
+  <% } %>
+
+  <div class="bg-white border border-slate-100 rounded-2xl p-6 mb-8">
+    <form action="<%= course ? '/admin/courses/' + course.id : '/admin/courses' %>" method="POST" class="space-y-5">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1.5">Judul Course</label>
+        <input type="text" name="title" required value="<%= course ? course.title : '' %>" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Contoh: Python Dasar untuk Pemula" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1.5">Deskripsi Singkat</label>
+        <input type="text" name="short_description" value="<%= course ? course.short_description : '' %>" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Ditampilkan di kartu course" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1.5">Deskripsi Lengkap</label>
+        <textarea name="description" rows="5" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none"><%= course ? course.description : '' %></textarea>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">URL Thumbnail (opsional)</label>
+          <input type="url" name="thumbnail" value="<%= course ? course.thumbnail : '' %>" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="https://..." />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">Kategori</label>
+          <input type="text" name="category" value="<%= course ? course.category : '' %>" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="Scratch / Python / Roblox / dll" />
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-5">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">Level</label>
+          <select name="level" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm">
+            <option value="pemula" <%= course && course.level === 'pemula' ? 'selected' : '' %>>Pemula</option>
+            <option value="menengah" <%= course && course.level === 'menengah' ? 'selected' : '' %>>Menengah</option>
+            <option value="mahir" <%= course && course.level === 'mahir' ? 'selected' : '' %>>Mahir</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">Harga (Rp)</label>
+          <input type="number" name="price" min="0" step="1000" value="<%= course ? course.price : 0 %>" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+          <p class="text-xs text-slate-400 mt-1">Isi 0 untuk course gratis</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1.5">Masa Akses (hari)</label>
+          <input type="number" name="access_duration_days" min="1" value="<%= course ? course.access_duration_days : 365 %>" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+          <p class="text-xs text-slate-400 mt-1">Lama akses otomatis setelah bayar</p>
+        </div>
+      </div>
+
+      <label class="flex items-center gap-2.5">
+        <input type="checkbox" name="is_published" value="1" <%= course && course.is_published ? 'checked' : '' %> class="w-4 h-4 rounded text-brand-600" />
+        <span class="text-sm text-slate-700">Publikasikan course ini (terlihat oleh pelanggan)</span>
+      </label>
+
+      <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl transition"><%= course ? 'Simpan Perubahan' : 'Buat Course' %></button>
+    </form>
+  </div>
+
+  <% if (course) { %>
+    <!-- MANAJEMEN VIDEO / SECTION -->
+    <div class="bg-white border border-slate-100 rounded-2xl p-6">
+      <h2 class="font-display text-lg font-bold text-slate-900 mb-1">Video & Materi</h2>
+      <p class="text-sm text-slate-500 mb-5">Kelompokkan video ke dalam section, atur urutan, dan tentukan mana yang gratis (preview) atau berbayar.</p>
+
+      <% if (lessons.length > 0) { %>
+        <div class="space-y-2 mb-6">
+          <% lessons.forEach(l => { %>
+            <details class="border border-slate-100 rounded-xl">
+              <summary class="cursor-pointer px-4 py-3 flex items-center justify-between text-sm">
+                <span class="font-medium text-slate-700">#<%= l.order_index %> · <%= l.section_title %> — <%= l.title %></span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full <%= l.is_free ? 'bg-mint-400/10 text-mint-600' : 'bg-slate-100 text-slate-500' %>"><%= l.is_free ? 'Gratis' : 'Berbayar' %></span>
+              </summary>
+              <div class="p-4 border-t border-slate-100">
+                <form action="/admin/courses/<%= course.id %>/lessons/<%= l.id %>" method="POST" class="grid sm:grid-cols-2 gap-3">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <input type="text" name="section_title" value="<%= l.section_title %>" placeholder="Nama Section" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+                  <input type="text" name="title" value="<%= l.title %>" placeholder="Judul Video" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+                  <input type="url" name="video_url" value="<%= l.video_url %>" placeholder="URL Embed Video" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm sm:col-span-2" />
+                  <input type="number" name="duration_minutes" value="<%= l.duration_minutes %>" placeholder="Durasi (menit)" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+                  <input type="number" name="order_index" value="<%= l.order_index %>" placeholder="Urutan" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+                  <label class="flex items-center gap-2 text-sm sm:col-span-2">
+                    <input type="checkbox" name="is_free" value="1" <%= l.is_free ? 'checked' : '' %> class="w-4 h-4 rounded text-brand-600" /> Jadikan video preview gratis
+                  </label>
+                  <div class="sm:col-span-2 flex gap-3">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2 rounded-lg">Simpan</button>
+                  </div>
+                </form>
+                <form action="/admin/courses/<%= course.id %>/lessons/<%= l.id %>/delete" method="POST" class="mt-2" onsubmit="return confirm('Hapus video ini?');">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button class="text-red-500 text-sm font-medium hover:underline">Hapus Video</button>
+                </form>
+              </div>
+            </details>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <h3 class="font-semibold text-slate-800 mb-3 text-sm">+ Tambah Video Baru</h3>
+      <form action="/admin/courses/<%= course.id %>/lessons" method="POST" class="grid sm:grid-cols-2 gap-3">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <input type="text" name="section_title" placeholder="Nama Section (contoh: Pengenalan)" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <input type="text" name="title" placeholder="Judul Video" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <input type="url" name="video_url" placeholder="URL Embed Video (YouTube/Vimeo embed link)" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm sm:col-span-2" />
+        <input type="number" name="duration_minutes" placeholder="Durasi (menit)" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <input type="number" name="order_index" placeholder="Urutan (angka)" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <label class="flex items-center gap-2 text-sm sm:col-span-2">
+          <input type="checkbox" name="is_free" value="1" class="w-4 h-4 rounded text-brand-600" /> Jadikan video preview gratis
+        </label>
+        <div class="sm:col-span-2">
+          <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-lg">Tambah Video</button>
+        </div>
+      </form>
+    </div>
+  <% } else { %>
+    <p class="text-sm text-slate-400">Simpan course terlebih dahulu untuk mulai menambahkan video.</p>
+  <% } %>
+</div>
+
+<%- include('_layout_end') %>
+<%- include('../partials/footer') %>

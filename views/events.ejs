@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="bg-gradient-to-br from-slate-900 to-brand-900 py-14">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="font-display text-3xl font-extrabold text-white mb-2">Event SukaCoding</h1>
+    <p class="text-slate-300">Ikuti workshop, webinar, dan kompetisi coding seru</p>
+  </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+  <h2 class="font-display text-xl font-bold text-slate-900 mb-6">Akan Datang</h2>
+  <% if (upcoming.length === 0) { %>
+    <p class="text-slate-400 mb-14">Belum ada event mendatang. Pantau terus halaman ini ya!</p>
+  <% } else { %>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+      <% upcoming.forEach(event => { %>
+        <a href="/events/<%= event.slug %>" class="group bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-soft transition">
+          <div class="h-32 bg-gradient-to-br from-accent-400/20 to-brand-100 flex items-center justify-center overflow-hidden">
+            <% if (event.banner_image) { %><img src="<%= event.banner_image %>" class="w-full h-full object-cover" alt="" /><% } else { %><span class="text-3xl">📅</span><% } %>
+          </div>
+          <div class="p-5">
+            <div class="text-xs font-semibold text-accent-600 mb-2"><%= new Date(event.event_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></div>
+            <h3 class="font-display font-bold text-slate-900 group-hover:text-brand-600 transition line-clamp-2"><%= event.title %></h3>
+            <p class="text-sm text-slate-500 mt-2 line-clamp-2"><%= event.description %></p>
+            <span class="inline-block mt-4 text-xs font-semibold px-2.5 py-1 rounded-full <%= event.is_online ? 'bg-mint-400/10 text-mint-500' : 'bg-orange-50 text-orange-600' %>">
+              <%= event.is_online ? 'Online' : event.location %>
+            </span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (past.length > 0) { %>
+    <h2 class="font-display text-xl font-bold text-slate-900 mb-6">Event Sebelumnya</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-70">
+      <% past.forEach(event => { %>
+        <a href="/events/<%= event.slug %>" class="bg-white border border-slate-100 rounded-2xl p-5">
+          <div class="text-xs font-semibold text-slate-400 mb-2"><%= new Date(event.event_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></div>
+          <h3 class="font-display font-bold text-slate-700 line-clamp-2"><%= event.title %></h3>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

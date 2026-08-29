@@ -1,0 +1,52 @@
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <a href="/" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-mint-400 flex items-center justify-center shadow-soft">
+          <!-- Logo dikosongkan dulu sesuai permintaan, placeholder ikon -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L4.5 12l5.25-5M14.25 7L19.5 12l-5.25 5" />
+          </svg>
+        </div>
+        <span class="font-display font-extrabold text-xl text-slate-900">Suka<span class="text-brand-600">Coding</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-1">
+        <a href="/" class="px-4 py-2 rounded-lg text-sm font-medium <%= currentPath === '/' ? 'text-brand-600 bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50' %>">Beranda</a>
+        <a href="/courses" class="px-4 py-2 rounded-lg text-sm font-medium <%= currentPath.startsWith('/courses') ? 'text-brand-600 bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50' %>">Course</a>
+        <a href="/events" class="px-4 py-2 rounded-lg text-sm font-medium <%= currentPath.startsWith('/events') ? 'text-brand-600 bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50' %>">Event</a>
+        <% if (user) { %>
+          <a href="/dashboard" class="px-4 py-2 rounded-lg text-sm font-medium <%= currentPath.startsWith('/dashboard') ? 'text-brand-600 bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50' %>">Dashboard Saya</a>
+          <% if (user.role === 'admin') { %>
+            <a href="/admin" class="px-4 py-2 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin') ? 'text-brand-600 bg-brand-50' : 'text-slate-600 hover:text-brand-600 hover:bg-slate-50' %>">Admin</a>
+          <% } %>
+        <% } %>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <% if (user) { %>
+          <div class="hidden sm:flex items-center gap-2 text-sm text-slate-600">
+            <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-semibold text-xs">
+              <%= user.name.charAt(0).toUpperCase() %>
+            </div>
+            <span class="font-medium"><%= user.name.split(' ')[0] %></span>
+          </div>
+          <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button class="text-sm font-medium text-slate-500 hover:text-red-600 px-3 py-2">Keluar</button>
+          </form>
+        <% } else { %>
+          <a href="/login" class="text-sm font-medium text-slate-600 hover:text-brand-600 px-3 py-2">Masuk</a>
+          <a href="/register" class="text-sm font-semibold bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg shadow-soft transition">Daftar Gratis</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <!-- Menu mobile sederhana -->
+  <div class="md:hidden flex justify-around border-t border-slate-100 py-2 text-xs font-medium text-slate-600">
+    <a href="/" class="<%= currentPath === '/' ? 'text-brand-600' : '' %>">Beranda</a>
+    <a href="/courses" class="<%= currentPath.startsWith('/courses') ? 'text-brand-600' : '' %>">Course</a>
+    <a href="/events" class="<%= currentPath.startsWith('/events') ? 'text-brand-600' : '' %>">Event</a>
+    <% if (user) { %><a href="/dashboard" class="<%= currentPath.startsWith('/dashboard') ? 'text-brand-600' : '' %>">Saya</a><% } %>
+  </div>
+</nav>

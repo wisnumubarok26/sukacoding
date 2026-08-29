@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+<%- include('_layout_start') %>
+
+<div class="p-6 lg:p-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="font-display text-2xl font-bold text-slate-900">Kelola Course</h1>
+    <a href="/admin/courses/new" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm">+ Tambah Course</a>
+  </div>
+
+  <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-500 text-left">
+        <tr>
+          <th class="px-5 py-3">Judul</th>
+          <th class="px-5 py-3">Kategori</th>
+          <th class="px-5 py-3">Harga</th>
+          <th class="px-5 py-3">Status</th>
+          <th class="px-5 py-3 text-right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% if (courses.length === 0) { %>
+          <tr><td colspan="5" class="px-5 py-6 text-center text-slate-400">Belum ada course.</td></tr>
+        <% } %>
+        <% courses.forEach(c => { %>
+          <tr>
+            <td class="px-5 py-3 font-medium text-slate-700"><%= c.title %></td>
+            <td class="px-5 py-3 text-slate-500"><%= c.category %></td>
+            <td class="px-5 py-3 text-slate-500"><%= c.price > 0 ? formatRupiah(c.price) : 'Gratis' %></td>
+            <td class="px-5 py-3">
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full <%= c.is_published ? 'bg-mint-400/10 text-mint-600' : 'bg-slate-100 text-slate-500' %>">
+                <%= c.is_published ? 'Dipublikasikan' : 'Draft' %>
+              </span>
+            </td>
+            <td class="px-5 py-3 text-right space-x-2">
+              <a href="/admin/courses/<%= c.id %>/edit" class="text-brand-600 hover:underline font-medium">Edit</a>
+              <form action="/admin/courses/<%= c.id %>/delete" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus course ini beserta semua videonya?');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button class="text-red-500 hover:underline font-medium">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('_layout_end') %>
+<%- include('../partials/footer') %>

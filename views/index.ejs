@@ -1,0 +1,163 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<!-- HERO -->
+<section class="relative overflow-hidden bg-gradient-to-br from-brand-700 via-brand-600 to-mint-500">
+  <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 20%, white 2px, transparent 2px); background-size: 30px 30px;"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 relative">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="inline-block bg-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-5 backdrop-blur">Belajar coding, seru dari umur berapapun</span>
+        <h1 class="font-display text-4xl sm:text-5xl font-extrabold text-white leading-tight mb-5">
+          Belajar Coding Jadi <span class="text-accent-400">Menyenangkan</span> di SukaCoding
+        </h1>
+        <p class="text-brand-100 text-lg mb-8 max-w-lg">
+          Kursus interaktif Scratch, Python, Roblox, dan lainnya. Dirancang untuk anak-anak sampai dewasa. Coba beberapa video pertama gratis sebelum berlangganan penuh!
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/courses" class="bg-white text-brand-700 font-bold px-6 py-3.5 rounded-xl shadow-soft hover:bg-brand-50 transition">Jelajahi Course</a>
+          <a href="/register" class="bg-accent-500 hover:bg-accent-600 text-white font-bold px-6 py-3.5 rounded-xl shadow-soft transition">Daftar Gratis</a>
+        </div>
+        <div class="flex items-center gap-6 mt-10 text-white/90 text-sm">
+          <div><span class="font-display text-2xl font-extrabold block">Project Based</span>Pembelajaran Praktik</div>
+          <div class="w-px h-8 bg-white/30"></div>
+          <div><span class="font-display text-2xl font-extrabold block">3+</span>Bahasa/Platform</div>
+          <div class="w-px h-8 bg-white/30"></div>
+          <div><span class="font-display text-2xl font-extrabold block">Beginner</span>Ramah Untuk Pemula</div>
+        </div>
+      </div>
+      <div class="hidden lg:flex justify-center">
+        <div class="relative w-full max-w-md">
+          <div class="absolute -top-6 -left-6 w-40 h-40 bg-accent-400/30 rounded-full blur-3xl"></div>
+          <div class="absolute -bottom-6 -right-6 w-40 h-40 bg-mint-400/30 rounded-full blur-3xl"></div>
+          <div class="relative bg-white rounded-3xl shadow-2xl p-6 rotate-2">
+            <div class="flex gap-1.5 mb-4">
+              <div class="w-3 h-3 rounded-full bg-red-400"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+              <div class="w-3 h-3 rounded-full bg-green-400"></div>
+            </div>
+            <div class="space-y-2 font-mono text-sm">
+              <p class="text-purple-600">def <span class="text-blue-600">sukacoding</span>():</p>
+              <p class="pl-4 text-slate-600">print(<span class="text-green-600">"Ayo belajar bareng!"</span>)</p>
+              <p class="pl-4 text-slate-600">return <span class="text-orange-500">"seru & mudah"</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KATEGORI -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-2">Pilih Jalur Belajarmu</h2>
+  <p class="text-slate-500 text-center mb-10">Mulai dari yang kamu suka, ikuti step by step sampai mahir</p>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <a href="/courses?category=Scratch" class="group bg-white border border-slate-100 rounded-2xl p-6 text-center hover:shadow-soft hover:-translate-y-1 transition">
+      <!-- <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 flex items-center justify-center text-2xl mb-3"> -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Scratchlogo.svg/1280px-Scratchlogo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail" alt=""
+        class=" h-14 mx-auto  flex items-center justify-center text-2xl mb-3">
+      <!-- </div> -->
+      <p class="font-semibold text-slate-800">Scratch</p>
+      <p class="text-xs text-slate-400 mt-1">Untuk Pemula</p>
+    </a>
+    <a href="/courses?category=Python" class="group bg-white border border-slate-100 rounded-2xl p-6 text-center hover:shadow-soft hover:-translate-y-1 transition">
+      <!-- <div class="w-14 h-14 mx-auto rounded-2xl bg-blue-100 flex items-center justify-center text-2xl mb-3"></div> -->
+       <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/3840px-Python-logo-notext.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail" alt="" class="w-14 h-14 mx-auto  flex items-center justify-center text-2xl mb-3">
+      <p class="font-semibold text-slate-800">Python</p>
+      <p class="text-xs text-slate-400 mt-1">Dasar - Mahir</p>
+    </a>
+    <a href="/courses?category=Roblox" class="group bg-white border border-slate-100 rounded-2xl p-6 text-center hover:shadow-soft hover:-translate-y-1 transition">
+      <!-- <div class="w-14 h-14 mx-auto rounded-2xl bg-red-100 flex items-center justify-center text-2xl mb-3"></div> -->
+       <img src="https://download.logo.wine/logo/Roblox/Roblox-Logo.wine.png" alt="" class=" h-16 mx-auto  flex items-center justify-center text-4xl mb-3">
+      <p class="font-semibold text-slate-800">Roblox</p>
+      <p class="text-xs text-slate-400 mt-1">Bikin Game</p>
+    </a>
+    <a href="/courses" class="group bg-white border border-slate-100 rounded-2xl p-6 text-center hover:shadow-soft hover:-translate-y-1 transition">
+      <!-- <div class="w-14 h-14 mx-auto rounded-2xl bg-mint-400/20 flex items-center justify-center text-2xl mb-3"></div> -->
+       <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJ0AAACUCAMAAAC+99ssAAAAY1BMVEUAAAD///+Ojo5ISEjs7Oz4+PgHBwc6OjpbW1v19fWTk5Pl5eXo6OgwMDCkpKTx8fFUVFR0dHSampoPDw/AwMCFhYXIyMi0tLQrKyvV1dXe3t56enpDQ0Nubm4eHh6tra1jY2PmevpMAAACuElEQVR4nO2cbXOiMBSFbxREQVEpaC315f//yjWkrtuAO+O5l1l3ep4P/XjmKSWdkJxEXEdRt9lMnmU2bXaJe0yya6ZAatbWyxAg3c9q9XTGjc/9Q7nzJ5yalb/tlu9wime+GHRbbFSpWRLslviDC1zWA3LruTI1W3d2uifnOQ7YXdSpmber1DEiu55cbZBaOin0j+766qW2L10gW4rFL9l/eDuT1Fq2JjllZGfxuoi0oh2wga35mPDg/y+/s4nspiapbyYpItNR7KygHQ7tcGiHQzsc2uHQDod2OLTDoR0O7XBoh0M7HNrh0A6Hdji0w6EdDu1waIdDOxza4fxMO5t9vHiP0WJr27vZ5DSRXWOSupHcJOcc2e1NUnM5WMSsPiK7D5Mt84Ok2laLJ954d86ibjBPxaT+0C/zrA1SD77Lo3+Dh4paZ3VqE1paE2VMPCQCpTJ14r4abqr2yOlRxe18UqS+dQ2X0L8rtmDS7L0Z7rd5Fg3aYjptC3e3cy7ZV/nkWfKyjgtQ30nr8vnUSb6/FSLlr+n/Gtrh0A6Hdji0w6EdDu1w/g+7pH6ZGVReRTOo0Wafz59M+Zp9Jne7F5y5z24z91T7URaX3ANGXz2tMmb4o0wr1+mN9bWdGKRev7ZNzmn0VyqOBqnzdKxVHosTL1c3mxWyeNzq1yk8ldisocari/qR5rmYpIx1+kPzD/NPfuaauw20w6EdDu1waIdDOxza4dAOh3Y4tMOhHQ7tcGiHQzsc2uHQDod2OLTDoR0O7XBoh0M7nLHswE5GxDh2M8lMcuJbKy023uXqZrPPG5c+9I0KT/vit0IWFqdIejdqmpwpyZZi8kfo30Zq8fBK3+XRP7x+HcViXHQ3ubpEO2yPQzWyxUUrl4QOWfLKNwi7F7x9eXW/fdnhN1dPRrm5uqnD0RT3C4PAJ4WKtnT4AAAAAElFTkSuQmCC" alt=""
+       class=" h-14 mx-auto  flex items-center justify-center text-4xl mb-3">
+      <p class="font-semibold text-slate-800">Lainnya</p>
+      <p class="text-xs text-slate-400 mt-1">Lihat Semua</p>
+    </a>
+  </div>
+</section>
+
+<!-- COURSE UNGGULAN -->
+<section class="bg-white py-16 border-y border-slate-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900">Course Terbaru</h2>
+        <p class="text-slate-500 mt-1">Beberapa video pertama bisa ditonton gratis</p>
+      </div>
+      <a href="/courses" class="text-brand-600 font-semibold text-sm hover:underline hidden sm:block">Lihat Semua →</a>
+    </div>
+
+    <% if (featuredCourses.length === 0) { %>
+      <p class="text-slate-400">Belum ada course yang dipublikasikan.</p>
+    <% } else { %>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% featuredCourses.forEach(course => { %>
+          <a href="/courses/<%= course.slug %>" class="group bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-soft transition">
+            <div class="h-40 bg-gradient-to-br from-brand-100 to-mint-100 flex items-center justify-center overflow-hidden">
+              <% if (course.thumbnail) { %>
+                <img src="<%= course.thumbnail %>" alt="<%= course.title %>" class="w-full h-full object-cover" />
+              <% } else { %>
+                <span class="text-4xl"></span>
+              <% } %>
+            </div>
+            <div class="p-5">
+              <span class="text-xs font-semibold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full"><%= course.category %></span>
+              <h3 class="font-display font-bold text-slate-900 mt-3 group-hover:text-brand-600 transition line-clamp-2"><%= course.title %></h3>
+              <p class="text-sm text-slate-500 mt-2 line-clamp-2"><%= course.short_description %></p>
+              <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                <span class="font-bold text-slate-900"><%= course.price > 0 ? formatRupiah(course.price) : 'Gratis' %></span>
+                <span class="text-xs text-slate-400"><%= course.level %></span>
+              </div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- EVENT -->
+<% if (upcomingEvents.length > 0) { %>
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="flex items-end justify-between mb-8">
+    <div>
+      <h2 class="font-display text-2xl sm:text-3xl font-bold text-slate-900">Event Mendatang</h2>
+      <p class="text-slate-500 mt-1">Ikuti workshop & event seru dari SukaCoding</p>
+    </div>
+    <a href="/events" class="text-brand-600 font-semibold text-sm hover:underline hidden sm:block">Lihat Semua →</a>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% upcomingEvents.forEach(event => { %>
+      <a href="/events/<%= event.slug %>" class="group bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-soft transition">
+        <div class="flex items-center gap-2 text-accent-600 text-xs font-semibold mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+          <%= new Date(event.event_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+        </div>
+        <h3 class="font-display font-bold text-slate-900 group-hover:text-brand-600 transition line-clamp-2"><%= event.title %></h3>
+        <p class="text-sm text-slate-500 mt-2 line-clamp-2"><%= event.description %></p>
+        <span class="inline-block mt-4 text-xs font-semibold px-2.5 py-1 rounded-full <%= event.is_online ? 'bg-mint-400/10 text-mint-500' : 'bg-orange-50 text-orange-600' %>">
+          <%= event.is_online ? 'Online' : event.location %>
+        </span>
+      </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<!-- CTA -->
+<section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+  <div class="bg-gradient-to-br from-slate-900 to-brand-900 rounded-3xl p-10 sm:p-14 text-center relative overflow-hidden">
+    <h2 class="font-display text-2xl sm:text-3xl font-bold text-white mb-3">Siap Mulai Petualangan Coding-mu?</h2>
+    <p class="text-slate-300 mb-8 max-w-xl mx-auto">Daftar sekarang dan coba video pembelajaran gratis di setiap course kami.</p>
+    <a href="/register" class="inline-block bg-accent-500 hover:bg-accent-600 text-white font-bold px-8 py-3.5 rounded-xl shadow-soft transition">Daftar Sekarang, Gratis!</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

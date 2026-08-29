@@ -1,0 +1,50 @@
+<%- include('../partials/head') %>
+<%- include('_layout_start') %>
+
+<div class="p-6 lg:p-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="font-display text-2xl font-bold text-slate-900">Kelola Event</h1>
+    <a href="/admin/events/new" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-2.5 rounded-xl transition text-sm">+ Tambah Event</a>
+  </div>
+
+  <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-500 text-left">
+        <tr>
+          <th class="px-5 py-3">Judul</th>
+          <th class="px-5 py-3">Tanggal</th>
+          <th class="px-5 py-3">Tipe</th>
+          <th class="px-5 py-3">Status</th>
+          <th class="px-5 py-3 text-right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% if (events.length === 0) { %>
+          <tr><td colspan="5" class="px-5 py-6 text-center text-slate-400">Belum ada event.</td></tr>
+        <% } %>
+        <% events.forEach(e => { %>
+          <tr>
+            <td class="px-5 py-3 font-medium text-slate-700"><%= e.title %></td>
+            <td class="px-5 py-3 text-slate-500"><%= new Date(e.event_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></td>
+            <td class="px-5 py-3 text-slate-500"><%= e.is_online ? 'Online' : 'Offline' %></td>
+            <td class="px-5 py-3">
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full <%= e.is_published ? 'bg-mint-400/10 text-mint-600' : 'bg-slate-100 text-slate-500' %>">
+                <%= e.is_published ? 'Dipublikasikan' : 'Draft' %>
+              </span>
+            </td>
+            <td class="px-5 py-3 text-right space-x-2">
+              <a href="/admin/events/<%= e.id %>/edit" class="text-brand-600 hover:underline font-medium">Edit</a>
+              <form action="/admin/events/<%= e.id %>/delete" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus event ini?');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button class="text-red-500 hover:underline font-medium">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('_layout_end') %>
+<%- include('../partials/footer') %>

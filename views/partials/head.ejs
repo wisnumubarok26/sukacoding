@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | SukaCoding</title>
+  <meta name="description" content="SukaCoding - Platform belajar coding untuk anak-anak dan dewasa: Scratch, Python, Roblox, dan lainnya." />
+  <link rel="icon" href="data:," />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Poppins', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef4ff', 100: '#dbe6fe', 200: '#bfd3fe', 300: '#93b4fd',
+              400: '#5f8bfa', 500: '#3b64f2', 600: '#2645e6', 700: '#1f36c2',
+              800: '#1f309b', 900: '#1e2c7a',
+            },
+            accent: {
+              400: '#ffb648', 500: '#ff9f1c', 600: '#f08700',
+            },
+            mint: { 400: '#2dd4bf', 500: '#14b8a6' },
+          },
+          boxShadow: {
+            soft: '0 10px 30px -10px rgba(30, 44, 122, 0.25)',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="font-sans bg-slate-50 text-slate-800 antialiased">

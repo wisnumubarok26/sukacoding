@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="max-w-3xl mx-auto px-4 py-14">
+  <a href="/events" class="text-sm text-brand-600 hover:underline">← Semua Event</a>
+
+  <div class="h-56 rounded-2xl bg-gradient-to-br from-accent-400/20 to-brand-100 flex items-center justify-center overflow-hidden mt-5 mb-6">
+    <% if (event.banner_image) { %><img src="<%= event.banner_image %>" class="w-full h-full object-cover" alt="" /><% } else { %><span class="text-5xl">📅</span><% } %>
+  </div>
+
+  <span class="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mb-3 <%= event.is_online ? 'bg-mint-400/10 text-mint-500' : 'bg-orange-50 text-orange-600' %>">
+    <%= event.is_online ? 'Online' : (event.location || 'Offline') %>
+  </span>
+  <h1 class="font-display text-3xl font-bold text-slate-900 mb-3"><%= event.title %></h1>
+  <p class="text-slate-500 mb-8">🗓️ <%= new Date(event.event_date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %> WIB</p>
+
+  <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line mb-10"><%= event.description %></div>
+
+  <% if (event.registration_link) { %>
+    <a href="<%= event.registration_link %>" target="_blank" rel="noopener noreferrer" class="inline-block bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl shadow-soft transition">Daftar Event Ini</a>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

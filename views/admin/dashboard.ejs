@@ -1,0 +1,67 @@
+<%- include('../partials/head') %>
+<%- include('_layout_start') %>
+
+<div class="p-6 lg:p-8">
+  <h1 class="font-display text-2xl font-bold text-slate-900 mb-6">Dashboard Admin</h1>
+
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+    <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <p class="text-xs text-slate-400 mb-1">Total Pendapatan</p>
+      <p class="font-display text-2xl font-extrabold text-slate-900"><%= formatRupiah(stats.revenue) %></p>
+    </div>
+    <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <p class="text-xs text-slate-400 mb-1">Transaksi Lunas</p>
+      <p class="font-display text-2xl font-extrabold text-slate-900"><%= stats.totalOrders %></p>
+    </div>
+    <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <p class="text-xs text-slate-400 mb-1">Total Pelanggan</p>
+      <p class="font-display text-2xl font-extrabold text-slate-900"><%= stats.totalUsers %></p>
+    </div>
+    <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <p class="text-xs text-slate-400 mb-1">Course & Event</p>
+      <p class="font-display text-2xl font-extrabold text-slate-900"><%= stats.totalCourses %> / <%= stats.totalEvents %></p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white border border-slate-100 rounded-2xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 font-semibold text-slate-800">Transaksi Terbaru</div>
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-slate-500 text-left">
+          <tr><th class="px-5 py-3">Pelanggan</th><th class="px-5 py-3">Course</th><th class="px-5 py-3">Status</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% if (recentOrders.length === 0) { %>
+            <tr><td colspan="3" class="px-5 py-6 text-center text-slate-400">Belum ada transaksi.</td></tr>
+          <% } %>
+          <% recentOrders.forEach(o => { %>
+            <tr>
+              <td class="px-5 py-3 font-medium text-slate-700"><%= o.user_name %></td>
+              <td class="px-5 py-3 text-slate-500 line-clamp-1"><%= o.course_title %></td>
+              <td class="px-5 py-3">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full <%= o.status === 'paid' ? 'bg-mint-400/10 text-mint-600' : o.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-500' %>">
+                  <%= o.status === 'paid' ? 'Lunas' : o.status === 'pending' ? 'Menunggu' : 'Gagal' %>
+                </span>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <p class="font-semibold text-slate-800 mb-4">Course Terpopuler</p>
+      <ul class="space-y-3">
+        <% popularCourses.forEach(c => { %>
+          <li class="flex items-center justify-between text-sm">
+            <a href="/courses/<%= c.slug %>" class="text-slate-600 hover:text-brand-600 line-clamp-1"><%= c.title %></a>
+            <span class="font-semibold text-slate-900"><%= c.total_enroll %></span>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('_layout_end') %>
+<%- include('../partials/footer') %>

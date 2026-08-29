@@ -1,0 +1,64 @@
+<%- include('../partials/head') %>
+<%- include('../partials/navbar') %>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <h1 class="font-display text-2xl font-bold text-slate-900 mb-1">Halo, <%= user.name.split(' ')[0] %> 👋</h1>
+  <p class="text-slate-500 mb-8">Berikut course yang sedang kamu pelajari</p>
+
+  <h2 class="font-semibold text-slate-800 mb-4">Course Aktif</h2>
+  <% if (active.length === 0) { %>
+    <div class="bg-white border border-dashed border-slate-200 rounded-2xl p-8 text-center mb-10">
+      <p class="text-slate-400 mb-4">Kamu belum punya course aktif.</p>
+      <a href="/courses" class="inline-block bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-2.5 rounded-xl transition">Jelajahi Course</a>
+    </div>
+  <% } else { %>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+      <% active.forEach(e => { %>
+        <a href="/courses/<%= e.slug %>" class="bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-soft transition">
+          <h3 class="font-display font-bold text-slate-900 line-clamp-2 mb-2"><%= e.title %></h3>
+          <p class="text-xs text-mint-600 font-semibold bg-mint-400/10 inline-block px-2.5 py-1 rounded-full">Aktif s/d <%= new Date(e.expires_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (expired.length > 0) { %>
+    <h2 class="font-semibold text-slate-800 mb-4">Sudah Kedaluwarsa</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10 opacity-60">
+      <% expired.forEach(e => { %>
+        <a href="/courses/<%= e.slug %>" class="bg-white border border-slate-100 rounded-2xl p-5">
+          <h3 class="font-display font-bold text-slate-900 line-clamp-2 mb-2"><%= e.title %></h3>
+          <p class="text-xs text-red-500 font-semibold bg-red-50 inline-block px-2.5 py-1 rounded-full">Kedaluwarsa</p>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <h2 class="font-semibold text-slate-800 mb-4">Riwayat Transaksi</h2>
+  <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-slate-500 text-left">
+        <tr><th class="px-5 py-3">Course</th><th class="px-5 py-3">Jumlah</th><th class="px-5 py-3">Status</th><th class="px-5 py-3">Tanggal</th></tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% if (orders.length === 0) { %>
+          <tr><td colspan="4" class="px-5 py-6 text-center text-slate-400">Belum ada transaksi.</td></tr>
+        <% } %>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td class="px-5 py-3 font-medium text-slate-700"><%= o.course_title %></td>
+            <td class="px-5 py-3"><%= formatRupiah(o.amount) %></td>
+            <td class="px-5 py-3">
+              <span class="text-xs font-semibold px-2.5 py-1 rounded-full <%= o.status === 'paid' ? 'bg-mint-400/10 text-mint-600' : o.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-500' %>">
+                <%= o.status === 'paid' ? 'Lunas' : o.status === 'pending' ? 'Menunggu' : 'Gagal' %>
+              </span>
+            </td>
+            <td class="px-5 py-3 text-slate-400"><%= new Date(o.created_at).toLocaleDateString('id-ID') %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
