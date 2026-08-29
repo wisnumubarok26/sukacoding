@@ -108,6 +108,6 @@ db.initDb()
     });
   })
   .catch((err) => {
-    console.error('❌ Gagal menyiapkan database, server tidak dijalankan:', err.message);
+    console.error('Gagal menyiapkan database, server tidak dijalankan:', err.message);
     process.exit(1);
   });

@@ -6,7 +6,7 @@ const { Pool } = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  console.error('❌ DATABASE_URL belum diset di .env. Lihat .env.example untuk contoh.');
+  console.error('DATABASE_URL belum diset di .env. Lihat .env.example untuk contoh.');
   process.exit(1);
 }
 
@@ -148,7 +148,7 @@ CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_to
 
 async function initDb() {
   await pool.query(schema);
-  console.log('✔ Skema database PostgreSQL siap.');
+  console.log('Skema database PostgreSQL siap.');
 }
 
 module.exports = { pool, query, one, all, withTransaction, initDb };

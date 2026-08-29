@@ -116,7 +116,7 @@ exports.midtransNotification = async (req, res) => {
       .digest('hex');
 
     if (signature_key !== expectedSignature) {
-      console.warn(`⚠️ Notifikasi Midtrans ditolak: signature tidak cocok untuk order ${order_id}`);
+      console.warn(`Notifikasi Midtrans ditolak: signature tidak cocok untuk order ${order_id}`);
       return res.status(403).json({ error: 'Invalid signature' });
     }
 
@@ -147,7 +147,7 @@ async function processTransactionStatus(orderCode, transactionStatus, transactio
     const order = orderRes.rows[0];
 
     if (!order) {
-      console.error(`❌ Notifikasi diterima untuk order_code yang tidak dikenal: ${orderCode}`);
+      console.error(`Notifikasi diterima untuk order_code yang tidak dikenal: ${orderCode}`);
       return;
     }
 
@@ -162,7 +162,7 @@ async function processTransactionStatus(orderCode, transactionStatus, transactio
       const paidAmount = Math.round(parseFloat(grossAmount));
       if (paidAmount !== order.amount) {
         console.error(
-          `🚨 MISMATCH JUMLAH PEMBAYARAN pada order ${orderCode}: diharapkan Rp${order.amount}, diterima Rp${paidAmount}. Order ditandai gagal, TIDAK memberi akses.`
+          `MISMATCH JUMLAH PEMBAYARAN pada order ${orderCode}: diharapkan Rp${order.amount}, diterima Rp${paidAmount}. Order ditandai gagal, TIDAK memberi akses.`
         );
         await client.query(`UPDATE orders SET status = 'failed' WHERE id = $1`, [order.id]);
         return;

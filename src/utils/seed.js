@@ -19,9 +19,9 @@ async function seed() {
       `INSERT INTO users (name, email, password_hash, role, email_verified) VALUES ($1, $2, $3, 'admin', 1)`,
       [adminName, adminEmail, hash]
     );
-    console.log(`✔ Akun admin dibuat: ${adminEmail} / ${adminPassword} (segera ganti password setelah login!)`);
+    console.log(`Akun admin dibuat: ${adminEmail} / ${adminPassword} (segera ganti password setelah login!)`);
   } else {
-    console.log('ℹ Akun admin sudah ada, dilewati.');
+    console.log('Akun admin sudah ada, dilewati.');
   }
 
   const admin = await db.one('SELECT id FROM users WHERE email = $1', [adminEmail]);
@@ -91,7 +91,7 @@ async function seed() {
         );
       }
     }
-    console.log(`✔ ${courses.length} contoh course berhasil dibuat.`);
+    console.log(`${courses.length} contoh course berhasil dibuat.`);
   }
 
   const eventCount = (await db.one('SELECT COUNT(*) c FROM events')).c;
@@ -111,7 +111,7 @@ async function seed() {
         admin.id,
       ]
     );
-    console.log('✔ 1 contoh event berhasil dibuat.');
+    console.log('1 contoh event berhasil dibuat.');
   }
 
   console.log('Seeding selesai.');

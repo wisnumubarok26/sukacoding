@@ -15,7 +15,7 @@ if (emailEnabled) {
   });
 } else {
   console.warn(
-    '⚠️  SMTP belum dikonfigurasi (.env). Email verifikasi & struk pembayaran TIDAK akan terkirim, hanya dicatat di log server. Isi SMTP_HOST/SMTP_USER/SMTP_PASS untuk mengaktifkan.'
+    'SMTP belum dikonfigurasi (.env). Email verifikasi & struk pembayaran TIDAK akan terkirim, hanya dicatat di log server. Isi SMTP_HOST/SMTP_USER/SMTP_PASS untuk mengaktifkan.'
   );
 }
 
@@ -25,7 +25,7 @@ async function sendMail({ to, subject, html }) {
   if (!emailEnabled) {
     // Mode fallback development: tidak mengirim email sungguhan, cukup dicatat di log
     // supaya alur tetap bisa dites tanpa perlu setup SMTP asli.
-    console.log(`\n📧 [EMAIL SIMULASI] Ke: ${to}\nSubjek: ${subject}\n${html.replace(/<[^>]+>/g, ' ').slice(0, 300)}...\n`);
+    console.log(`\n[EMAIL SIMULASI] Ke: ${to}\nSubjek: ${subject}\n${html.replace(/<[^>]+>/g, ' ').slice(0, 300)}...\n`);
     return { simulated: true };
   }
 
@@ -35,7 +35,7 @@ async function sendMail({ to, subject, html }) {
   } catch (err) {
     // Kegagalan kirim email TIDAK BOLEH menggagalkan proses utama (misal pembayaran).
     // Cukup dicatat sebagai error supaya bisa ditindaklanjuti manual oleh admin.
-    console.error(`❌ Gagal mengirim email ke ${to}:`, err.message);
+    console.error(`Gagal mengirim email ke ${to}:`, err.message);
     return { simulated: false, error: err.message };
   }
 }
@@ -66,7 +66,7 @@ async function sendVerificationEmail(user, token) {
 async function sendPaymentReceiptEmail(user, order, course) {
   const formatRupiah = (n) => 'Rp' + Number(n || 0).toLocaleString('id-ID');
   const html = baseTemplate(
-    'Pembayaran Berhasil ✅',
+    'Pembayaran Berhasil',
     `<p>Halo ${user.name},</p>
      <p>Pembayaran Anda untuk course berikut telah kami terima:</p>
      <table style="width:100%; border-collapse:collapse; margin:16px 0;">

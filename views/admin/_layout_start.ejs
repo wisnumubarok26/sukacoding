@@ -10,16 +10,16 @@
       <p class="text-xs text-slate-500 mt-1">Panel Admin</p>
     </div>
     <nav class="p-4 space-y-1">
-      <a href="/admin" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath === '/admin' ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">📊 Dashboard</a>
-      <a href="/admin/courses" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/courses') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">📚 Kelola Course</a>
-      <a href="/admin/events" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/events') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">📅 Kelola Event</a>
-      <a href="/admin/orders" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/orders') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">💳 Transaksi</a>
-      <a href="/admin/users" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/users') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">👥 Pengguna</a>
+      <a href="/admin" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath === '/admin' ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">Dashboard</a>
+      <a href="/admin/courses" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/courses') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">Kelola Course</a>
+      <a href="/admin/events" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/events') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">Kelola Event</a>
+      <a href="/admin/orders" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/orders') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">Transaksi</a>
+      <a href="/admin/users" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium <%= currentPath.startsWith('/admin/users') ? 'bg-brand-600 text-white' : 'hover:bg-slate-800' %>">Pengguna</a>
       <div class="border-t border-slate-800 my-3"></div>
-      <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800">🌐 Lihat Website</a>
+      <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800">Lihat Website</a>
       <form action="/logout" method="POST">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-        <button class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 text-red-400">🚪 Keluar</button>
+        <button class="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 text-red-400">Keluar</button>
       </form>
     </nav>
   </aside>
