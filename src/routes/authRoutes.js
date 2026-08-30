@@ -35,6 +35,11 @@ router.post(
 router.get('/verify-email', asyncHandler(authController.verifyEmail));
 router.post('/resend-verification', authLimiter, asyncHandler(authController.resendVerification));
 
+router.get('/forgot-password', authController.showForgotPassword);
+router.post('/forgot-password', authLimiter, sanitizeBody(['email']), asyncHandler(authController.forgotPassword));
+router.get('/reset-password', asyncHandler(authController.showResetPassword));
+router.post('/reset-password', authLimiter, asyncHandler(authController.resetPassword));
+
 router.get('/login', authController.showLogin);
 router.post('/login', authLimiter, sanitizeBody(['email']), asyncHandler(authController.login));
 

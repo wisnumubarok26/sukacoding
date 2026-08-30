@@ -37,7 +37,16 @@
         </form>
       <% } %>
 
+      <% if (successMessage) { %>
+        <div class="mt-4 bg-mint-50 text-mint-700 text-sm rounded-lg p-3">
+          <%= successMessage %>
+        </div>
+      <% } %>
+
       <p class="text-center text-sm text-slate-500 mt-6">
+        <a href="/forgot-password" class="text-brand-600 font-semibold hover:underline">Lupa password?</a>
+      </p>
+      <p class="text-center text-sm text-slate-500 mt-2">
         Belum punya akun? <a href="/register" class="text-brand-600 font-semibold hover:underline">Daftar di sini</a>
       </p>
     </div>

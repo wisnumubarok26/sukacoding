@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS users (
   email_verified INTEGER NOT NULL DEFAULT 0,
   verification_token TEXT,
   verification_token_expires TIMESTAMPTZ,
+  reset_password_token TEXT,
+  reset_password_token_expires TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -148,6 +150,10 @@ CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_to
 
 async function initDb() {
   await pool.query(schema);
+  await pool.query(`
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_token TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_token_expires TIMESTAMPTZ;
+  `);
   console.log('Skema database PostgreSQL siap.');
 }
 

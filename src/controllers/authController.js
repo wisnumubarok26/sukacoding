@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { validationResult } = require('express-validator');
 const db = require('../db');
-const { sendVerificationEmail } = require('../utils/email');
+const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/email');
 
 const COOKIE_OPTS = {
   httpOnly: true,
@@ -129,29 +129,181 @@ exports.resendVerification = async (req, res) => {
   res.render('verify-email-sent', { title: 'Verifikasi Email Anda', email, resendMessage: genericMessage });
 };
 
+exports.showForgotPassword = (req, res) => {
+  res.render('forgot-password', {
+    title: 'Lupa Password',
+    errors: [],
+    email: '',
+    successMessage: '',
+  });
+};
+
+exports.forgotPassword = async (req, res) => {
+  const email = (req.body.email || '').toLowerCase().trim();
+
+  if (!email) {
+    return res.status(400).render('forgot-password', {
+      title: 'Lupa Password',
+      errors: [{ msg: 'Email wajib diisi.' }],
+      email: '',
+      successMessage: '',
+    });
+  }
+
+  const userRes = await db.query('SELECT id, name, email, is_active FROM users WHERE email = $1', [email]);
+  const user = userRes.rows[0];
+
+  if (user && Number(user.is_active) === 1) {
+    const resetToken = generateVerificationToken();
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60);
+
+    await db.query(
+      'UPDATE users SET reset_password_token = $1, reset_password_token_expires = $2 WHERE id = $3',
+      [resetToken, expiresAt, user.id]
+    );
+
+    await sendPasswordResetEmail(user, resetToken);
+  }
+
+  res.render('forgot-password', {
+    title: 'Lupa Password',
+    errors: [],
+    email,
+    successMessage: 'Jika email tersebut terdaftar, kami sudah mengirim link reset password. Silakan cek inbox atau folder spam.',
+  });
+};
+
+exports.showResetPassword = async (req, res) => {
+  const { token } = req.query;
+  if (!token) {
+    return res.status(400).render('verify-email-result', {
+      title: 'Reset Password Gagal',
+      success: false,
+      message: 'Token reset password tidak valid.',
+    });
+  }
+
+  const userRes = await db.query(
+    `SELECT id, reset_password_token_expires FROM users WHERE reset_password_token = $1 AND is_active = 1`,
+    [token]
+  );
+  const user = userRes.rows[0];
+
+  if (!user) {
+    return res.status(400).render('verify-email-result', {
+      title: 'Reset Password Gagal',
+      success: false,
+      message: 'Token reset password tidak valid atau sudah kedaluwarsa.',
+    });
+  }
+
+  if (new Date(user.reset_password_token_expires) < new Date()) {
+    return res.status(400).render('verify-email-result', {
+      title: 'Token Kedaluwarsa',
+      success: false,
+      message: 'Link reset password sudah kedaluwarsa. Silakan ajukan permintaan baru.',
+    });
+  }
+
+  res.render('reset-password', {
+    title: 'Buat Password Baru',
+    errors: [],
+    token,
+  });
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    return res.status(400).render('reset-password', {
+      title: 'Buat Password Baru',
+      errors: [{ msg: 'Token dan password baru wajib diisi.' }],
+      token: token || '',
+    });
+  }
+
+  if (password.length < 8 || !/\d/.test(password)) {
+    return res.status(400).render('reset-password', {
+      title: 'Buat Password Baru',
+      errors: [{ msg: 'Password minimal 8 karakter dan mengandung angka.' }],
+      token,
+    });
+  }
+
+  const userRes = await db.query(
+    `SELECT id, reset_password_token_expires FROM users WHERE reset_password_token = $1 AND is_active = 1`,
+    [token]
+  );
+  const user = userRes.rows[0];
+
+  if (!user) {
+    return res.status(400).render('verify-email-result', {
+      title: 'Reset Password Gagal',
+      success: false,
+      message: 'Token reset password tidak valid atau sudah digunakan.',
+    });
+  }
+
+  if (new Date(user.reset_password_token_expires) < new Date()) {
+    return res.status(400).render('verify-email-result', {
+      title: 'Token Kedaluwarsa',
+      success: false,
+      message: 'Link reset password sudah kedaluwarsa. Silakan ajukan permintaan baru.',
+    });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  await db.query(
+    `UPDATE users SET password_hash = $1, reset_password_token = NULL, reset_password_token_expires = NULL WHERE id = $2`,
+    [passwordHash, user.id]
+  );
+
+  res.render('verify-email-result', {
+    title: 'Password Berhasil Direset',
+    success: true,
+    message: 'Password Anda berhasil diperbarui. Silakan login dengan password baru.',
+  });
+};
+
 exports.showLogin = (req, res) => {
-  res.render('login', { title: 'Masuk', errors: [], old: {}, next: req.query.next || '', unverifiedEmail: null });
+  res.render('login', { title: 'Masuk', errors: [], old: {}, next: req.query.next || '', unverifiedEmail: null, successMessage: req.query.reset === 'success' ? 'Password berhasil diperbarui. Silakan login.' : '' });
 };
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   const next = req.body.next || '/dashboard';
-  const genericError = [{ msg: 'Email atau password salah.' }];
+  const passwordError = [{ msg: 'Password salah. Silakan cek kembali password Anda.' }];
 
   if (!email || !password) {
-    return res.status(400).render('login', { title: 'Masuk', errors: genericError, old: req.body, next, unverifiedEmail: null });
+    return res.status(400).render('login', {
+      title: 'Masuk',
+      errors: passwordError,
+      old: req.body,
+      next,
+      unverifiedEmail: null,
+      successMessage: '',
+    });
   }
 
   const normalizedEmail = email.toLowerCase().trim();
-  const user = await db.one('SELECT * FROM users WHERE email = $1', [normalizedEmail]);
+  const userRes = await db.query('SELECT * FROM users WHERE email = $1', [normalizedEmail]);
+  const user = userRes.rows[0];
 
-  // Selalu jalankan bcrypt.compare meski user tidak ditemukan (mitigasi timing attack)
-  const validPassword = user
-    ? await bcrypt.compare(password, user.password_hash)
-    : await bcrypt.compare(password, '$2a$12$invalidsaltinvalidsaltinvalidsaltinva');
+  let validPassword = false;
+  if (user) {
+    validPassword = await bcrypt.compare(password, user.password_hash);
+  }
 
   if (!user || !validPassword || !user.is_active) {
-    return res.status(400).render('login', { title: 'Masuk', errors: genericError, old: req.body, next, unverifiedEmail: null });
+    return res.status(400).render('login', {
+      title: 'Masuk',
+      errors: passwordError,
+      old: req.body,
+      next,
+      unverifiedEmail: null,
+      successMessage: '',
+    });
   }
 
   if (!user.email_verified) {
@@ -161,6 +313,7 @@ exports.login = async (req, res) => {
       old: req.body,
       next,
       unverifiedEmail: normalizedEmail,
+      successMessage: '',
     });
   }
 
