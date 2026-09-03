@@ -1,5 +1,17 @@
 const db = require('../db');
 
+function addYoutubeOrigin(videoUrl, origin) {
+  try {
+    const url = new URL(videoUrl);
+    if (['www.youtube.com', 'youtube.com', 'm.youtube.com'].includes(url.hostname) && url.pathname.startsWith('/embed/')) {
+      url.searchParams.set('origin', origin);
+    }
+    return url.toString();
+  } catch {
+    return videoUrl;
+  }
+}
+
 async function getActiveEnrollment(userId, courseId) {
   if (!userId) return null;
   return db.one(
@@ -98,7 +110,7 @@ exports.watchLesson = async (req, res) => {
   res.render('watch', {
     title: `${lesson.title} - ${course.title}`,
     course,
-    lesson,
+    lesson: { ...lesson, video_url: addYoutubeOrigin(lesson.video_url, `${req.protocol}://${req.get('host')}`) },
     allLessons,
     hasAccess: !!enrollment,
   });

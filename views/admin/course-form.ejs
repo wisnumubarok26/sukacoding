@@ -89,7 +89,7 @@
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <input type="text" name="section_title" value="<%= l.section_title %>" placeholder="Nama Section" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
                   <input type="text" name="title" value="<%= l.title %>" placeholder="Judul Video" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
-                  <input type="url" name="video_url" value="<%= l.video_url %>" placeholder="URL Embed Video" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm sm:col-span-2" />
+                  <input type="url" name="video_url" value="<%= l.video_url %>" placeholder="https://www.youtube.com/embed/VIDEO_ID" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm sm:col-span-2" />
                   <input type="number" name="duration_minutes" value="<%= l.duration_minutes %>" placeholder="Durasi (menit)" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
                   <input type="number" name="order_index" value="<%= l.order_index %>" placeholder="Urutan" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
                   <label class="flex items-center gap-2 text-sm sm:col-span-2">
@@ -114,7 +114,7 @@
         <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <input type="text" name="section_title" placeholder="Nama Section (contoh: Pengenalan)" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
         <input type="text" name="title" placeholder="Judul Video" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
-        <input type="url" name="video_url" placeholder="URL Embed Video (YouTube/Vimeo embed link)" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm sm:col-span-2" />
+        <input type="url" name="video_url" placeholder="https://www.youtube.com/embed/VIDEO_ID" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm sm:col-span-2" />
         <input type="number" name="duration_minutes" placeholder="Durasi (menit)" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
         <input type="number" name="order_index" placeholder="Urutan (angka)" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
         <label class="flex items-center gap-2 text-sm sm:col-span-2">
