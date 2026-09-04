@@ -19,6 +19,27 @@ function generateOrderCode() {
   return 'SC-' + Date.now() + '-' + crypto.randomBytes(3).toString('hex').toUpperCase();
 }
 
+async function getPromo(courseId, code) {
+  if (!code) return null;
+  const promo = await db.one(
+    `SELECT * FROM promo_codes
+     WHERE course_id = $1 AND code = $2 AND is_active = 1
+       AND (starts_at IS NULL OR starts_at <= NOW())
+       AND (expires_at IS NULL OR expires_at >= NOW())
+       AND (max_uses IS NULL OR used_count < max_uses)`,
+    [courseId, code.trim().toUpperCase()]
+  );
+  return promo;
+}
+
+function calculateDiscount(price, promo) {
+  if (!promo) return 0;
+  const discount = promo.discount_type === 'percent'
+    ? Math.floor(price * promo.discount_value / 100)
+    : promo.discount_value;
+  return Math.min(price, discount);
+}
+
 // Halaman checkout: membuat order baru berstatus pending
 exports.checkout = async (req, res) => {
   const course = await db.one('SELECT * FROM courses WHERE slug = $1 AND is_published = 1', [req.params.slug]);
@@ -33,10 +54,30 @@ exports.checkout = async (req, res) => {
     return res.redirect(`/courses/${course.slug}`);
   }
 
+  const requestedPromo = typeof req.query.promo === 'string' ? req.query.promo : '';
+  const promo = await getPromo(course.id, requestedPromo);
+  const discountAmount = calculateDiscount(course.price, promo);
+  const finalAmount = course.price - discountAmount;
+  const promoError = requestedPromo && !promo ? 'Kode promo tidak valid, sudah kedaluwarsa, atau kuotanya habis.' : null;
+
+  if (finalAmount === 0) {
+    await db.withTransaction(async (client) => {
+      await client.query(
+        `INSERT INTO orders (order_code, user_id, course_id, amount, original_amount, discount_amount, promo_code, status, paid_at)
+         VALUES ($1, $2, $3, 0, $4, $5, $6, 'paid', NOW())`,
+        [generateOrderCode(), req.user.id, course.id, course.price, discountAmount, promo ? promo.code : null]
+      );
+      await enrollUser(req.user.id, course, client);
+      if (promo) await client.query('UPDATE promo_codes SET used_count = used_count + 1 WHERE id = $1', [promo.id]);
+    });
+    return res.redirect(`/courses/${course.slug}`);
+  }
+
   const orderCode = generateOrderCode();
   const order = await db.one(
-    'INSERT INTO orders (order_code, user_id, course_id, amount, status) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-    [orderCode, req.user.id, course.id, course.price, 'pending']
+    `INSERT INTO orders (order_code, user_id, course_id, amount, original_amount, discount_amount, promo_code, status)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+    [orderCode, req.user.id, course.id, finalAmount, course.price, discountAmount, promo ? promo.code : null, 'pending']
   );
 
   let snapToken = null;
@@ -47,7 +88,7 @@ exports.checkout = async (req, res) => {
       const parameter = {
         transaction_details: {
           order_id: orderCode,
-          gross_amount: course.price,
+          gross_amount: finalAmount,
         },
         customer_details: {
           first_name: req.user.name,
@@ -56,7 +97,7 @@ exports.checkout = async (req, res) => {
         item_details: [
           {
             id: `course-${course.id}`,
-            price: course.price,
+            price: finalAmount,
             quantity: 1,
             name: course.title.substring(0, 50),
           },
@@ -83,6 +124,10 @@ exports.checkout = async (req, res) => {
     midtransEnabled,
     isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
     clientKey: process.env.MIDTRANS_CLIENT_KEY || '',
+    promo,
+    promoError,
+    discountAmount,
+    finalAmount,
   });
 };
 
@@ -176,6 +221,12 @@ async function processTransactionStatus(orderCode, transactionStatus, transactio
       const courseRes = await client.query('SELECT * FROM courses WHERE id = $1', [order.course_id]);
       const course = courseRes.rows[0];
       await enrollUser(order.user_id, course, client);
+      if (order.promo_code) {
+        await client.query(
+          'UPDATE promo_codes SET used_count = used_count + 1 WHERE course_id = $1 AND code = $2 AND (max_uses IS NULL OR used_count < max_uses)',
+          [order.course_id, order.promo_code]
+        );
+      }
 
       // Kirim email struk SETELAH transaction commit berhasil (di luar callback ini),
       // supaya kalau pengiriman email lambat/gagal, tidak menahan/membatalkan transaction DB.

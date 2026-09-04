@@ -8,7 +8,7 @@
       <h1 class="font-display text-3xl font-extrabold text-white mb-4"><%= course.title %></h1>
       <p class="text-slate-300 leading-relaxed"><%= course.short_description %></p>
       <div class="flex items-center gap-5 mt-6 text-sm text-slate-300">
-        <span><%= totalLessons %> video pelajaran</span>
+        <span><%= completedLessons %>/<%= totalLessons %> video selesai</span>
         <span><%= freeLessons %> video gratis</span>
         <span>Akses <%= course.access_duration_days %> hari</span>
       </div>
@@ -26,8 +26,11 @@
         <div class="bg-mint-400/10 text-mint-600 text-sm font-semibold rounded-lg p-3 mb-4 text-center">
           Kamu punya akses penuh sampai <%= new Date(enrollment.expires_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %>
         </div>
-        <% if (sections[0] && sections[0].lessons[0]) { %>
-          <a href="/courses/<%= course.slug %>/watch/<%= sections[0].lessons[0].id %>" class="block text-center w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl transition">Lanjutkan Belajar</a>
+        <% if (nextLesson) { %>
+          <a href="/courses/<%= course.slug %>/watch/<%= nextLesson.id %>" class="block text-center w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl transition"><%= completedLessons === totalLessons ? 'Ulangi Course' : 'Lanjutkan Belajar' %></a>
+        <% } %>
+        <% if (completedLessons === totalLessons && totalLessons > 0) { %>
+          <a href="/courses/<%= course.slug %>/certificate" class="block text-center w-full border border-brand-200 text-brand-600 font-semibold py-3 rounded-xl transition mt-2">Lihat Sertifikat</a>
         <% } %>
       <% } else if (!user) { %>
         <a href="/login?next=<%= encodeURIComponent('/courses/' + course.slug) %>" class="block text-center w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 rounded-xl transition">Masuk untuk Membeli</a>
@@ -58,8 +61,10 @@
           <% section.lessons.forEach(lesson => { %>
             <li class="px-5 py-3.5 flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <span class="text-slate-300">
-                  <% if (lesson.is_free || hasAccess) { %>
+                <span class="<%= lesson.completed_at ? 'text-mint-500' : 'text-slate-300' %>">
+                  <% if (lesson.completed_at) { %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <% } else if (lesson.is_free || hasAccess) { %>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   <% } else { %>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>

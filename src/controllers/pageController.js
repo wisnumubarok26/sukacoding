@@ -16,9 +16,14 @@ exports.home = async (req, res) => {
 
 exports.dashboard = async (req, res) => {
   const enrollments = await db.all(
-    `SELECT e.*, c.title, c.slug, c.thumbnail, c.short_description
+    `SELECT e.*, c.title, c.slug, c.thumbnail, c.short_description,
+       COUNT(l.id)::INTEGER AS total_lessons,
+       COUNT(lp.lesson_id)::INTEGER AS completed_lessons
      FROM enrollments e JOIN courses c ON c.id = e.course_id
-     WHERE e.user_id = $1 ORDER BY e.created_at DESC`,
+     LEFT JOIN lessons l ON l.course_id = c.id
+     LEFT JOIN lesson_progress lp ON lp.lesson_id = l.id AND lp.user_id = e.user_id
+    WHERE e.user_id = $1
+    GROUP BY e.id, c.id ORDER BY e.created_at DESC`,
     [req.user.id]
   );
 

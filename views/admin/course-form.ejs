@@ -71,6 +71,30 @@
   </div>
 
   <% if (course) { %>
+    <div class="bg-white border border-slate-100 rounded-2xl p-6 mb-8">
+      <h2 class="font-display text-lg font-bold text-slate-900 mb-1">Kode Promo</h2>
+      <p class="text-sm text-slate-500 mb-5">Kode berlaku khusus untuk course ini.</p>
+      <% if (promos && promos.length) { %>
+        <div class="space-y-2 mb-5">
+          <% promos.forEach(p => { %>
+            <div class="flex items-center justify-between border border-slate-100 rounded-lg px-3 py-2 text-sm">
+              <span><strong><%= p.code %></strong> · <%= p.discount_type === 'percent' ? p.discount_value + '%' : formatRupiah(p.discount_value) %> · terpakai <%= p.used_count %><%= p.max_uses ? '/' + p.max_uses : '' %></span>
+              <form action="/admin/courses/<%= course.id %>/promos/<%= p.id %>/delete" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>" /><button class="text-red-500 text-xs">Hapus</button></form>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+      <form action="/admin/courses/<%= course.id %>/promos" method="POST" class="grid sm:grid-cols-2 gap-3">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <input type="text" name="code" placeholder="Kode, contoh: BELAJAR10" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm uppercase" />
+        <select name="discount_type" class="px-3 py-2 rounded-lg border border-slate-200 text-sm"><option value="percent">Persentase (%)</option><option value="fixed">Nominal (Rp)</option></select>
+        <input type="number" name="discount_value" min="1" placeholder="Nilai diskon" required class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <input type="number" name="max_uses" min="1" placeholder="Batas pemakaian opsional" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <input type="datetime-local" name="starts_at" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <input type="datetime-local" name="expires_at" class="px-3 py-2 rounded-lg border border-slate-200 text-sm" />
+        <button class="sm:col-span-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg">Simpan Kode Promo</button>
+      </form>
+    </div>
     <!-- MANAJEMEN VIDEO / SECTION -->
     <div class="bg-white border border-slate-100 rounded-2xl p-6">
       <h2 class="font-display text-lg font-bold text-slate-900 mb-1">Video & Materi</h2>

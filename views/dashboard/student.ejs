@@ -14,10 +14,17 @@
   <% } else { %>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
       <% active.forEach(e => { %>
-        <a href="/courses/<%= e.slug %>" class="bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-soft transition">
+        <div class="bg-white border border-slate-100 rounded-2xl p-5 hover:shadow-soft transition">
+          <a href="/courses/<%= e.slug %>">
           <h3 class="font-display font-bold text-slate-900 line-clamp-2 mb-2"><%= e.title %></h3>
           <p class="text-xs text-mint-600 font-semibold bg-mint-400/10 inline-block px-2.5 py-1 rounded-full">Aktif s/d <%= new Date(e.expires_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
-        </a>
+          </a>
+          <div class="mt-4">
+            <div class="flex justify-between text-xs text-slate-500 mb-1"><span>Progress belajar</span><span><%= e.completed_lessons %>/<%= e.total_lessons %></span></div>
+            <div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-mint-500 rounded-full" style="width: <%= e.total_lessons ? Math.round((e.completed_lessons / e.total_lessons) * 100) : 0 %>%"></div></div>
+          </div>
+          <% if (e.total_lessons > 0 && e.completed_lessons === e.total_lessons) { %><a href="/courses/<%= e.slug %>/certificate" class="inline-block mt-3 text-xs text-brand-600 font-semibold hover:underline">Lihat Sertifikat</a><% } %>
+        </div>
       <% }) %>
     </div>
   <% } %>

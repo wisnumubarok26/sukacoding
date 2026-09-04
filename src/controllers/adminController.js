@@ -94,8 +94,9 @@ exports.editCourseForm = async (req, res) => {
   if (!course) return res.status(404).render('error', { title: 'Tidak Ditemukan', message: 'Course tidak ditemukan.' });
 
   const lessons = await db.all('SELECT * FROM lessons WHERE course_id = $1 ORDER BY order_index ASC, id ASC', [course.id]);
+  const promos = await db.all('SELECT * FROM promo_codes WHERE course_id = $1 ORDER BY created_at DESC', [course.id]);
 
-  res.render('admin/course-form', { title: 'Edit Course', course, lessons, errors: [] });
+  res.render('admin/course-form', { title: 'Edit Course', course, lessons, promos, errors: [] });
 };
 
 exports.updateCourse = async (req, res) => {
@@ -177,6 +178,28 @@ exports.updateLesson = async (req, res) => {
 
 exports.deleteLesson = async (req, res) => {
   await db.query('DELETE FROM lessons WHERE id = $1 AND course_id = $2', [req.params.lessonId, req.params.id]);
+  res.redirect(`/admin/courses/${req.params.id}/edit`);
+};
+
+exports.createPromo = async (req, res) => {
+  const { code, discount_type, discount_value, max_uses, starts_at, expires_at } = req.body;
+  const courseId = req.params.id;
+  const value = parseInt(discount_value, 10);
+  if (!code || !['percent', 'fixed'].includes(discount_type) || !value || value < 1 || (discount_type === 'percent' && value > 100)) {
+    return res.status(400).redirect(`/admin/courses/${courseId}/edit`);
+  }
+  await db.query(
+    `INSERT INTO promo_codes (course_id, code, discount_type, discount_value, max_uses, starts_at, expires_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     ON CONFLICT (course_id, code) DO UPDATE SET discount_type=EXCLUDED.discount_type, discount_value=EXCLUDED.discount_value,
+       max_uses=EXCLUDED.max_uses, starts_at=EXCLUDED.starts_at, expires_at=EXCLUDED.expires_at, is_active=1`,
+    [courseId, code.trim().toUpperCase(), discount_type, value, parseInt(max_uses, 10) || null, starts_at || null, expires_at || null]
+  );
+  res.redirect(`/admin/courses/${courseId}/edit`);
+};
+
+exports.deletePromo = async (req, res) => {
+  await db.query('DELETE FROM promo_codes WHERE id = $1 AND course_id = $2', [req.params.promoId, req.params.id]);
   res.redirect(`/admin/courses/${req.params.id}/edit`);
 };
 
@@ -262,7 +285,23 @@ exports.deleteEvent = async (req, res) => {
 // ---------- USERS & ORDERS ----------
 exports.listUsers = async (req, res) => {
   const users = await db.all('SELECT id, name, email, role, is_active, email_verified, created_at FROM users ORDER BY created_at DESC');
-  res.render('admin/users', { title: 'Kelola Pengguna', users });
+  const courses = await db.all('SELECT id, title FROM courses ORDER BY title ASC');
+  res.render('admin/users', { title: 'Kelola Pengguna', users, courses });
+};
+
+exports.grantCourse = async (req, res) => {
+  const user = await db.one('SELECT id, role FROM users WHERE id = $1', [req.params.id]);
+  const course = await db.one('SELECT * FROM courses WHERE id = $1', [req.body.course_id]);
+  if (user && user.role !== 'admin' && course) {
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + (course.access_duration_days || 365));
+    await db.query(
+      `INSERT INTO enrollments (user_id, course_id, expires_at) VALUES ($1, $2, $3)
+       ON CONFLICT (user_id, course_id) DO UPDATE SET expires_at = GREATEST(enrollments.expires_at, EXCLUDED.expires_at)`,
+      [user.id, course.id, expiresAt]
+    );
+  }
+  res.redirect('/admin/users');
 };
 
 exports.toggleUserActive = async (req, res) => {

@@ -113,18 +113,44 @@ CREATE TABLE IF NOT EXISTS enrollments (
   UNIQUE(user_id, course_id)
 );
 
+CREATE TABLE IF NOT EXISTS lesson_progress (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE,
+  completed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, lesson_id)
+);
+
 CREATE TABLE IF NOT EXISTS orders (
   id SERIAL PRIMARY KEY,
   order_code TEXT NOT NULL UNIQUE,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
   amount INTEGER NOT NULL,
+  original_amount INTEGER,
+  discount_amount INTEGER NOT NULL DEFAULT 0,
+  promo_code TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','paid','failed','expired')),
   payment_method TEXT,
   transaction_id TEXT,
   snap_token TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   paid_at TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS promo_codes (
+  id SERIAL PRIMARY KEY,
+  course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  code TEXT NOT NULL,
+  discount_type TEXT NOT NULL CHECK(discount_type IN ('percent', 'fixed')),
+  discount_value INTEGER NOT NULL CHECK(discount_value > 0),
+  max_uses INTEGER,
+  used_count INTEGER NOT NULL DEFAULT 0,
+  starts_at TIMESTAMPTZ,
+  expires_at TIMESTAMPTZ,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(course_id, code)
 );
 
 CREATE TABLE IF NOT EXISTS events (
@@ -144,7 +170,9 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE INDEX IF NOT EXISTS idx_lessons_course ON lessons(course_id);
 CREATE INDEX IF NOT EXISTS idx_enrollments_user ON enrollments(user_id);
+CREATE INDEX IF NOT EXISTS idx_lesson_progress_user ON lesson_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_promo_codes_course ON promo_codes(course_id);
 CREATE INDEX IF NOT EXISTS idx_users_verification_token ON users(verification_token);
 `;
 
@@ -153,6 +181,9 @@ async function initDb() {
   await pool.query(`
     ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_token TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_password_token_expires TIMESTAMPTZ;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS original_amount INTEGER;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_amount INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo_code TEXT;
   `);
   console.log('Skema database PostgreSQL siap.');
 }

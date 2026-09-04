@@ -21,6 +21,8 @@ router.post('/courses/:id/delete', asyncHandler(admin.deleteCourse));
 router.post('/courses/:id/lessons', sanitizeBody(['title', 'section_title']), asyncHandler(admin.addLesson));
 router.post('/courses/:id/lessons/:lessonId', sanitizeBody(['title', 'section_title']), asyncHandler(admin.updateLesson));
 router.post('/courses/:id/lessons/:lessonId/delete', asyncHandler(admin.deleteLesson));
+router.post('/courses/:id/promos', sanitizeBody(['code']), asyncHandler(admin.createPromo));
+router.post('/courses/:id/promos/:promoId/delete', asyncHandler(admin.deletePromo));
 
 // Events
 router.get('/events', asyncHandler(admin.listEventsAdmin));
@@ -33,6 +35,7 @@ router.post('/events/:id/delete', asyncHandler(admin.deleteEvent));
 // Users & orders
 router.get('/users', asyncHandler(admin.listUsers));
 router.post('/users/:id/toggle', asyncHandler(admin.toggleUserActive));
+router.post('/users/:id/grant-course', asyncHandler(admin.grantCourse));
 router.get('/orders', asyncHandler(admin.listOrders));
 
 module.exports = router;

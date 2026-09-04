@@ -13,6 +13,7 @@
           <th class="px-5 py-3">Role</th>
           <th class="px-5 py-3">Status</th>
           <th class="px-5 py-3">Bergabung</th>
+          <th class="px-5 py-3">Beri Course</th>
           <th class="px-5 py-3 text-right">Aksi</th>
         </tr>
       </thead>
@@ -28,6 +29,15 @@
               <span class="text-xs font-semibold px-2.5 py-1 rounded-full <%= u.is_active ? 'bg-mint-400/10 text-mint-600' : 'bg-red-50 text-red-500' %>"><%= u.is_active ? 'Aktif' : 'Nonaktif' %></span>
             </td>
             <td class="px-5 py-3 text-slate-400"><%= new Date(u.created_at).toLocaleDateString('id-ID') %></td>
+            <td class="px-5 py-3">
+              <% if (u.role !== 'admin') { %>
+                <form action="/admin/users/<%= u.id %>/grant-course" method="POST" class="flex gap-1">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <select name="course_id" required class="max-w-32 px-2 py-1 border border-slate-200 rounded text-xs"><option value="">Pilih</option><% courses.forEach(c => { %><option value="<%= c.id %>"><%= c.title %></option><% }) %></select>
+                  <button class="text-brand-600 text-xs font-semibold">Beri</button>
+                </form>
+              <% } %>
+            </td>
             <td class="px-5 py-3 text-right">
               <% if (u.role !== 'admin') { %>
                 <form action="/admin/users/<%= u.id %>/toggle" method="POST" class="inline">

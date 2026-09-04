@@ -8,6 +8,14 @@
     </div>
     <span class="text-xs font-semibold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full"><%= lesson.section_title %></span>
     <h1 class="font-display text-xl font-bold text-slate-900 mt-3"><%= lesson.title %></h1>
+    <form action="/courses/<%= course.slug %>/watch/<%= lesson.id %>/complete" method="POST" class="mt-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <% if (isCompleted) { %>
+        <button type="submit" class="inline-flex items-center gap-2 text-sm font-semibold text-mint-600 bg-mint-400/10 px-4 py-2.5 rounded-xl"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0z" /></svg>Sudah selesai</button>
+      <% } else { %>
+        <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition">Tandai selesai</button>
+      <% } %>
+    </form>
     <a href="/courses/<%= course.slug %>" class="text-sm text-brand-600 hover:underline mt-2 inline-block">← Kembali ke halaman course</a>
   </div>
 
@@ -18,7 +26,7 @@
         <li>
           <% if (l.is_free || hasAccess) { %>
             <a href="/courses/<%= course.slug %>/watch/<%= l.id %>" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm <%= l.id === lesson.id ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-slate-600 hover:bg-slate-50' %>">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <% if (l.completed_at) { %><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-mint-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0z" /></svg><% } else { %><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><% } %>
               <span class="line-clamp-1"><%= l.title %></span>
             </a>
           <% } else { %>
